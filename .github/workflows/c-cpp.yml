@@ -11,31 +11,35 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1. Checkout du code avec récupération récursive complète des sous-modules (JUCE, VST3 SDK)
+    # 1. Recuperation du code et des sous-modules
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         submodules: recursive
         fetch-depth: 0
 
-    # 2. Configuration CMake (Génère la solution Visual Studio 64-bit)
+    # 2. Configuration CMake
     - name: Configure CMake
-      run: cmake -B build -A x64
+      run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 
-    # 4. Installation explicite d'Inno Setup sur le runner
-    - name: Install Inno Setup
-      run: choco install innosetup -y
+    # 3. Compilation C++ / VST
+    - name: Build VST Plugin
+      run: cmake --build build --config Release --parallel
 
-    # 5. Compilation de l'installeur .exe
+    # 4. Verification des fichiers compiles (Debug)
+    - name: List built files
+      if: always()
+      run: |
+        Get-ChildItem -Path build -Recurse -Filter *.vst3
+
+    # 5. Compilation de l'installeur Inno Setup
     - name: Compile Inno Setup Installer
       run: |
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer_script.iss
 
-    # 6. Export de l'installeur .exe dans les Artifacts GitHub
+    # 6. Export de l'installeur
     - name: Upload Installer Executable
       uses: actions/upload-artifact@v4
       with:
-        name: VST-Windows-64bit-Installer
-        path: dist/*.exe
         name: VST-Windows-64bit-Installer
         path: dist/*.exe
