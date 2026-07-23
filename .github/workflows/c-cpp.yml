@@ -20,7 +20,11 @@ jobs:
 
     # 2. Configuration CMake (Génère la solution Visual Studio 64-bit)
     - name: Configure CMake
-      run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
+      # ❌ OLD (remove this)
+run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
+
+# ✅ NEW (use this)
+run: cmake -B build -A x64
 
     # 3. Compilation du VST en Release 64-bit
     - name: Build VST Plugin
