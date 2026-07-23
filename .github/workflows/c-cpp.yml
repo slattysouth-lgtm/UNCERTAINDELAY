@@ -1,0 +1,39 @@
+name: Build VST & Create Windows Installer
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    # 1. Récupérer le code source du dépôt (avec les sous-modules si vous utilisez JUCE ou SDK VST)
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    # 2. Configurer CMake pour générer une solution Visual Studio 64-bit
+    - name: Configure CMake
+      run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
+
+    # 3. Compiler le plugin VST en 64-bit Release
+    - name: Build VST Plugin
+      run: cmake --build build --config Release
+
+    # 4. Compiler l'installeur .exe avec Inno Setup
+    # Assurez-vous d'avoir un fichier "installer_script.iss" à la racine de votre projet
+    - name: Compile Inno Setup Installer
+      run: |
+        iscc /O"dist" installer_script.iss
+
+    # 5. Mettre l'installeur .exe à disposition en téléchargement (Artifacts)
+    - name: Upload Installer Executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: VST-Windows-64bit-Installer
+        path: dist/*.exe
