@@ -20,19 +20,8 @@ jobs:
 
     # 2. Configuration CMake (Génère la solution Visual Studio 64-bit)
     - name: Configure CMake
-      # ❌ OLD (remove this)
-run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
+      run: cmake -B build -A x64
 
-# ✅ NEW (use this)
-run: cmake -B build -A x64
-
-      # 2. Configuration CMake (Génère la solution Visual Studio 64-bit)
-    - name: Configure CMake
-      # ❌ OLD (remove this)
-run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
-
-# ✅ NEW (use this)
-run: cmake -B build -A x64
     # 4. Installation explicite d'Inno Setup sur le runner
     - name: Install Inno Setup
       run: choco install innosetup -y
@@ -46,5 +35,7 @@ run: cmake -B build -A x64
     - name: Upload Installer Executable
       uses: actions/upload-artifact@v4
       with:
+        name: VST-Windows-64bit-Installer
+        path: dist/*.exe
         name: VST-Windows-64bit-Installer
         path: dist/*.exe
