@@ -26,10 +26,13 @@ run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 # ✅ NEW (use this)
 run: cmake -B build -A x64
 
-    # 3. Compilation du VST en Release 64-bit
-    - name: Build VST Plugin
-      run: cmake --build build --config Release --parallel
+      # 2. Configuration CMake (Génère la solution Visual Studio 64-bit)
+    - name: Configure CMake
+      # ❌ OLD (remove this)
+run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
 
+# ✅ NEW (use this)
+run: cmake -B build -A x64
     # 4. Installation explicite d'Inno Setup sur le runner
     - name: Install Inno Setup
       run: choco install innosetup -y
